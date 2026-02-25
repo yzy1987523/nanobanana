@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "lib": ["deno.window"]
   },
   "lint": {
@@ -14,3 +13,4 @@
     }
   }
 }
+
