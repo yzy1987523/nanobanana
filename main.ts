@@ -148,8 +148,9 @@ serve(async (req) => {
         });
     }
 
-    // Root path - handle before serveDir to ensure warm up works
+    // Root path - always return a response for warm up
     if (pathname === "/" || pathname === "/index.html") {
+        // Try to read the file, but always return something
         try {
             const indexHtml = await readFile("./static/index.html");
             if (indexHtml) {
@@ -159,11 +160,13 @@ serve(async (req) => {
             }
         } catch (error) {
             console.error("Failed to read index.html:", error);
-            return new Response(
-                '<!DOCTYPE html><html><head><meta charset="utf-8"><title>AI Image Generator</title></head><body><h1>AI Image Generator</h1><p>Loading...</p></body></html>',
-                { headers: { "Content-Type": "text/html; charset=utf-8" } }
-            );
         }
+        
+        // Fallback inline HTML
+        return new Response(
+            '<!DOCTYPE html><html><head><meta charset="utf-8"><title>AI Image Generator</title></head><body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><div style="text-align: center; color: white;"><h1>AI Image Generator</h1><p>Loading...</p></div></body></html>',
+            { headers: { "Content-Type": "text/html; charset=utf-8" } }
+        );
     }
 
     if (pathname === "/generate") {
