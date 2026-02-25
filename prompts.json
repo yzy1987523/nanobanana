@@ -1,0 +1,14 @@
+[
+  {
+    "name": "apple",
+    "prompt": "a red shiny apple on a white background, high quality, detailed"
+  },
+  {
+    "name": "banana",
+    "prompt": "a yellow banana on a wooden table, realistic lighting"
+  },
+  {
+    "name": "orange",
+    "prompt": "a fresh orange with green leaves, vibrant colors"
+  }
+]
