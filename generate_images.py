@@ -16,7 +16,7 @@ import requests
 
 
 # 默认配置
-DEFAULT_API_KEY = "ms-28230386-a9ef-41bd-8982-a2d474026996"
+DEFAULT_API_KEY = "ms-28230386-a9ef-41bd-8982-a2d474026991"
 DEFAULT_MODEL = "Qwen/Qwen-Image"
 BASE_URL = "https://api-inference.modelscope.cn/v1"
 
