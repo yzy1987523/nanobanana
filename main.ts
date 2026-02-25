@@ -205,11 +205,40 @@ serve(async (req) => {
         }
     }
 
+    // Serve static files manually for better Deno Deploy compatibility
     try {
-        // Serve static files for non-API routes
-        return await serveDir(req, { fsRoot: "./static", urlRoot: "", showDirListing: false, enableCors: true });
+        const urlPath = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+        const staticPath = urlPath ? `./static/${urlPath}` : "./static/index.html";
+        
+        const fileContent = await readFile(staticPath);
+        if (fileContent) {
+            const contentType = getContentType(urlPath);
+            return new Response(fileContent, {
+                headers: { "Content-Type": contentType },
+            });
+        }
     } catch (error) {
         console.error("Static file serving error:", error);
-        return createJsonErrorResponse(`Static file error: ${error.message}`, 500);
     }
+    
+    // Fallback to serveDir
+    return await serveDir(req, { fsRoot: "./static", urlRoot: "", showDirListing: false, enableCors: true });
 });
+
+// Helper: Get content type based on file extension
+function getContentType(path: string): string {
+    const ext = path.split(".").pop()?.toLowerCase();
+    const types: Record<string, string> = {
+        html: "text/html; charset=utf-8",
+        css: "text/css; charset=utf-8",
+        js: "application/javascript; charset=utf-8",
+        json: "application/json",
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        gif: "image/gif",
+        svg: "image/svg+xml",
+        ico: "image/x-icon",
+    };
+    return types[ext || ""] || "text/plain";
+}
