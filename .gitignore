@@ -14,3 +14,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Scripts (keep them)
+# !git-push.ps1
+
