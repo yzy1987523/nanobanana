@@ -96,7 +96,11 @@ async function callModelScope(model: string, apikey: string, parameters: any, ti
 // =======================================================
 // 主服务逻辑
 // =======================================================
+console.log("Starting server...");
+
 serve(async (req) => {
+    console.log(`Request: ${req.method} ${new URL(req.url).pathname}`);
+
     const pathname = new URL(req.url).pathname;
     
     if (req.method === 'OPTIONS') { 
@@ -121,6 +125,13 @@ serve(async (req) => {
         const isSet = !!Deno.env.get("MODELSCOPE_API_KEY");
         return new Response(JSON.stringify({ isSet }), {
             headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        });
+    }
+
+    // Health check for Deno Deploy warm up
+    if (pathname === "/health") {
+        return new Response(JSON.stringify({ status: "ok" }), {
+            headers: { "Content-Type": "application/json" },
         });
     }
 
@@ -166,5 +177,19 @@ serve(async (req) => {
         }
     }
 
-    return serveDir(req, { fsRoot: "static", urlRoot: "", showDirListing: true, enableCors: true });
+    try {
+        // Try different paths for Deno Deploy compatibility
+        const fsRoot = "./static";
+        console.log(`Attempting to serve from fsRoot: ${fsRoot}`);
+        return await serveDir(req, { fsRoot, urlRoot: "", showDirListing: false, enableCors: true });
+    } catch (error) {
+        console.error("Static file serving error:", error);
+        // Fallback: serve a simple HTML response
+        if (pathname === "/") {
+            return new Response("<html><body><h1>AI Image Generator</h1><p>Static files not available. Check deployment configuration.</p></body></html>", {
+                headers: { "Content-Type": "text/html" },
+            });
+        }
+        return createJsonErrorResponse(`Static file error: ${error.message}`, 500);
+    }
 });
