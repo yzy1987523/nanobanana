@@ -6,9 +6,12 @@ import { serveDir } from "https://deno.land/std@0.224.0/http/file_server.ts";
 // --- 辅助函数：读取静态文件 ---
 async function readFile(path: string): Promise<string | null> {
     try {
+        console.log(`[DEBUG] Trying to read file: ${path}`);
         const file = await Deno.readTextFile(path);
+        console.log(`[DEBUG] Successfully read file: ${path}, size: ${file.length}`);
         return file;
-    } catch {
+    } catch (error) {
+        console.error(`[DEBUG] Failed to read file ${path}:`, error.message);
         return null;
     }
 }
