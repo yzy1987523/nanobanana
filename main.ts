@@ -211,9 +211,15 @@ serve(async (req) => {
         }
     }
 
-    // Serve static files manually for better Deno Deploy compatibility
+    // Serve static files manually - no serveDir to avoid Deno Deploy issues
     try {
-        const urlPath = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+        let urlPath = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+        
+        // Handle favicon.ico
+        if (urlPath === "favicon.ico") {
+            urlPath = "favicon.ico";
+        }
+        
         const staticPath = urlPath ? `./static/${urlPath}` : "./static/index.html";
         
         const fileContent = await readFile(staticPath);
@@ -227,8 +233,8 @@ serve(async (req) => {
         console.error("Static file serving error:", error);
     }
     
-    // Fallback to serveDir
-    return await serveDir(req, { fsRoot: "./static", urlRoot: "", showDirListing: false, enableCors: true });
+    // 404 fallback
+    return new Response("Not Found", { status: 404 });
 });
 
 // Helper: Get content type based on file extension
