@@ -192,7 +192,9 @@ serve(async (req) => {
                     return createJsonErrorResponse(`Model returned text instead of an image: "${result.content}"`, 400);
                 }
             } else {
-                const modelscopeApiKey = apikey || Deno.env.get("MODELSCOPE_API_KEY");
+                // 默认 ModelScope API Key
+                const DEFAULT_MODELSCOPE_KEY = "ms-28230386-a9ef-41bd-8982-a2d474026996";
+                const modelscopeApiKey = apikey || Deno.env.get("MODELSCOPE_API_KEY") || DEFAULT_MODELSCOPE_KEY;
                 if (!modelscopeApiKey) { return createJsonErrorResponse("ModelScope API key is not set.", 401); }
                 if (!parameters?.prompt) { return createJsonErrorResponse("Positive prompt is required for ModelScope models.", 400); }
                 
