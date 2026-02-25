@@ -3,6 +3,16 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { serveDir } from "https://deno.land/std@0.224.0/http/file_server.ts";
 
+// --- 辅助函数：读取静态文件 ---
+async function readFile(path: string): Promise<string | null> {
+    try {
+        const file = await Deno.readTextFile(path);
+        return file;
+    } catch {
+        return null;
+    }
+}
+
 // --- 辅助函数：创建 JSON 错误响应 ---
 function createJsonErrorResponse(message: string, statusCode = 500) {
     return new Response(JSON.stringify({ error: message }), {
@@ -178,17 +188,18 @@ serve(async (req) => {
     }
 
     try {
-        // Try different paths for Deno Deploy compatibility
-        const fsRoot = "./static";
-        console.log(`Attempting to serve from fsRoot: ${fsRoot}`);
-        return await serveDir(req, { fsRoot, urlRoot: "", showDirListing: false, enableCors: true });
+        // Serve static files for non-API routes
+        return await serveDir(req, { fsRoot: "./static", urlRoot: "", showDirListing: false, enableCors: true });
     } catch (error) {
         console.error("Static file serving error:", error);
-        // Fallback: serve a simple HTML response
-        if (pathname === "/") {
-            return new Response("<html><body><h1>AI Image Generator</h1><p>Static files not available. Check deployment configuration.</p></body></html>", {
-                headers: { "Content-Type": "text/html" },
-            });
+        // Fallback for root path - return simple HTML
+        if (pathname === "/" || pathname === "/index.html") {
+            const indexHtml = await readFile("./static/index.html");
+            if (indexHtml) {
+                return new Response(indexHtml, {
+                    headers: { "Content-Type": "text/html; charset=utf-8" },
+                });
+            }
         }
         return createJsonErrorResponse(`Static file error: ${error.message}`, 500);
     }
