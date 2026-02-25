@@ -145,6 +145,24 @@ serve(async (req) => {
         });
     }
 
+    // Root path - handle before serveDir to ensure warm up works
+    if (pathname === "/" || pathname === "/index.html") {
+        try {
+            const indexHtml = await readFile("./static/index.html");
+            if (indexHtml) {
+                return new Response(indexHtml, {
+                    headers: { "Content-Type": "text/html; charset=utf-8" },
+                });
+            }
+        } catch (error) {
+            console.error("Failed to read index.html:", error);
+            return new Response(
+                '<!DOCTYPE html><html><head><meta charset="utf-8"><title>AI Image Generator</title></head><body><h1>AI Image Generator</h1><p>Loading...</p></body></html>',
+                { headers: { "Content-Type": "text/html; charset=utf-8" } }
+            );
+        }
+    }
+
     if (pathname === "/generate") {
         try {
             // [修改] 从请求体中解构出 timeout
@@ -192,15 +210,6 @@ serve(async (req) => {
         return await serveDir(req, { fsRoot: "./static", urlRoot: "", showDirListing: false, enableCors: true });
     } catch (error) {
         console.error("Static file serving error:", error);
-        // Fallback for root path - return simple HTML
-        if (pathname === "/" || pathname === "/index.html") {
-            const indexHtml = await readFile("./static/index.html");
-            if (indexHtml) {
-                return new Response(indexHtml, {
-                    headers: { "Content-Type": "text/html; charset=utf-8" },
-                });
-            }
-        }
         return createJsonErrorResponse(`Static file error: ${error.message}`, 500);
     }
 });
