@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const timeoutPerRequest = isQwen ? 120 * 1000 : 180 * 1000;
         const totalTimeout = isQwen ? 360 * 1000 : timeoutPerRequest;
         
-        const baseRequestBody = { model: currentModel, apikey: apiKeyModelScopeInput.value, parameters: { prompt: inputs.prompt, negative_prompt: inputs.negative_prompt, size: inputs.size, steps: inputs.steps, guidance: inputs.guidance, seed: inputs.seed }, timeout: timeoutPerRequest / 1000 };
+        const baseRequestBody = { model: currentModel, apikey: apiKeyModelScopeInput.value, parameters: { prompt: inputs.prompt, negative_prompt: inputs.negative_prompt, size: inputs.size, steps: inputs.steps, guidance_scale: inputs.guidance, seed: inputs.seed }, timeout: timeoutPerRequest / 1000 };
         const results = [];
         const controller = new AbortController();
         const overallTimeoutId = setTimeout(() => controller.abort(), totalTimeout);
