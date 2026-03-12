@@ -1,0 +1,6 @@
+[
+  {
+    "name": "items_grid_v3",
+    "prompt": "A 3x3 grid, 9 square cells with clear black borders, cartoon style. Each cell contains ONE game item icon: \n\nRow 1: [gold coin] [dinosaur fossil] [blue dragon egg]\nRow 2: [hammer] [flask] [bone]  \nRow 3: [red spiky egg] [golden shield] [device]\n\nFlat vector art, bright colors, white background, pixel game aesthetic."
+  }
+]

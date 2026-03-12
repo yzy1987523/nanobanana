@@ -1,0 +1,19 @@
+# 输出目录
+output/
+*.png
+*.jpg
+
+# 临时文件
+*_temp.png
+*_nobg.png
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
